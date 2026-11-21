@@ -1,0 +1,72 @@
+{
+  "name": "aethercore-ai-desktop",
+  "version": "1.0.0",
+  "description": "AetherCore-AI — Autonomous Windows Thermal, CPU & RAM Optimization Suite",
+  "author": "AetherCore-AI",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev:ui": "vite",
+    "dev:electron": "concurrently \"npm run dev:ui\" \"wait-on http://localhost:5173 && electron .\"",
+    "build:ui": "vite build",
+    "pack:win": "npm run build:ui && electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.aethercore.ai.desktop",
+    "productName": "AetherCore-AI",
+    "copyright": "Copyright © 2026 AetherCore-AI",
+    "directories": {
+      "output": "../installer-build",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/icons/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../ai-engine/dist/aethercore-engine.exe",
+        "to": "ai-engine/aethercore-engine.exe"
+      },
+      {
+        "from": "../ai-engine/config",
+        "to": "ai-engine/config"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "AetherCore-AI-Setup-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AetherCore-AI"
+    }
+  },
+  "dependencies": {
+    "lucide-react": "^0.453.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.0.1",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "vite": "^5.4.11",
+    "wait-on": "^8.0.1"
+  }
+}

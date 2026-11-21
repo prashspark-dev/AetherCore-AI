@@ -1,0 +1,22 @@
+﻿{
+  "protected_os_processes": [
+    "system",
+    "idle",
+    "registry",
+    "smss.exe",
+    "csrss.exe",
+    "wininit.exe",
+    "services.exe",
+    "lsass.exe",
+    "svchost.exe",
+    "winlogon.exe",
+    "explorer.exe",
+    "dwm.exe",
+    "audiodg.exe",
+    "taskmgr.exe",
+    "securityhealthservice.exe",
+    "msmpeng.exe",
+    "aethercore-ai.exe"
+  ],
+  "notes": "These critical Windows kernel, security, and UI processes are permanently shielded from throttling or suspension."
+}

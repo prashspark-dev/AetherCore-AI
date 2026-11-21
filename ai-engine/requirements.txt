@@ -1,0 +1,6 @@
+﻿psutil>=6.0.0
+numpy>=1.26.0
+onnxruntime>=1.19.0
+pywin32>=306; sys_platform == 'win32'
+wmi>=1.5.1; sys_platform == 'win32'
+websockets>=13.0

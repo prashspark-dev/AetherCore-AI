@@ -1,0 +1,20 @@
+{
+  "focus_seconds": {
+    "code.exe": 1453.4,
+    "chrome.exe": 2785.3,
+    "snippingtool.exe": 112.2,
+    "pickerhost.exe": 28.7,
+    "searchhost.exe": 18.2,
+    "shellexperiencehost.exe": 5.0,
+    "ollama app.exe": 4.2,
+    "avpui.exe": 5.0,
+    "aethercore-ai-setup-1.0.0.exe": 75.1
+  },
+  "manual_vips": [],
+  "auto_learned_vips": [
+    "aethercore-ai-setup-1.0.0.exe",
+    "chrome.exe",
+    "code.exe",
+    "snippingtool.exe"
+  ]
+}
