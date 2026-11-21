@@ -30,9 +30,11 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 echo.
-echo [STEP 2/3] Building Optimized React Desktop UI...
+echo [STEP 2/3] Building Optimized React Desktop UI (Connected to Live Cloud API)...
 cd /d "%~dp0desktop-app"
-call npm install --no-audit --no-fund
+if not exist "node_modules" (
+    call npm install --no-audit --no-fund
+)
 call npm run build:ui
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] React UI build failed!
@@ -49,7 +51,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 echo.
 echo ============================================================================
-echo   BUILD COMPLETE! Your Windows Installer is ready in File Explorer:
+echo   BUILD COMPLETE! Cloud-Connected Installer is ready in File Explorer:
 echo   %~dp0installer-build\AetherCore-AI-Setup-1.0.0.exe
 echo ============================================================================
 explorer "%~dp0installer-build"
