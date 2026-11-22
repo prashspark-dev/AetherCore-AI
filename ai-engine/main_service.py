@@ -1,3 +1,12 @@
+# AETHERCORE_PORT_GUARD
+import sys as _sys
+_orig_excepthook = _sys.excepthook
+def _aether_excepthook(exc_type, exc_val, exc_tb):
+    if isinstance(exc_val, OSError) and getattr(exc_val, "winerror", None) in (10048, 10013):
+        _sys.exit(0)
+    _orig_excepthook(exc_type, exc_val, exc_tb)
+_sys.excepthook = _aether_excepthook
+
 ﻿import os
 import sys
 import json
