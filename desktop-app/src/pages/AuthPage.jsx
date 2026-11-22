@@ -576,6 +576,19 @@ export default function AuthPage({ legalConsent, hardwarePermissions, onAuthSucc
           {/* MODE 3: EMAIL OTP VERIFICATION */}
           {mode === "verify_email" && (
             <form onSubmit={handleVerifyEmail} className="space-y-4">
+              {/* AETHERCORE_BACK_BTN */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof setMode === "function") setMode("login");
+                  if (typeof setStep === "function") setStep("credentials");
+                  if (typeof setError === "function") setError("");
+                  if (typeof setInfo === "function") setInfo("");
+                }}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-400 hover:text-cyan-300 mb-4 transition"
+              >
+                <span>&larr;</span> Back to Sign In
+              </button>
               <h2 className="text-2xl font-bold text-white">Verify Your Email</h2>
               <p className="text-xs text-slate-300">
                 Enter the 6-digit verification code sent to <strong className="text-cyan-300">{email}</strong>.
@@ -642,6 +655,19 @@ export default function AuthPage({ legalConsent, hardwarePermissions, onAuthSucc
           {/* MODE 5: RESET PASSWORD WITH OTP */}
           {mode === "reset_password" && (
             <form onSubmit={handleResetPassword} className="space-y-4">
+              {/* AETHERCORE_BACK_BTN */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof setMode === "function") setMode("login");
+                  if (typeof setStep === "function") setStep("credentials");
+                  if (typeof setError === "function") setError("");
+                  if (typeof setInfo === "function") setInfo("");
+                }}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-400 hover:text-cyan-300 mb-4 transition"
+              >
+                <span>&larr;</span> Back to Sign In
+              </button>
               <h2 className="text-2xl font-bold text-white">Create New Password</h2>
               <p className="text-xs text-slate-300">
                 Enter the 6-digit code sent to <strong className="text-cyan-300">{email}</strong> and choose a new

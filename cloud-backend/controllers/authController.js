@@ -1,3 +1,4 @@
+// AETHERCORE_RESET_FALLBACK
 ﻿const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
@@ -104,7 +105,12 @@ const registerUser = async (req, res) => {
     // Step 7: Send Verification OTP Email
     let _emailDelivered = true;
       try {
-        await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+        let _mailOk = true;
+        try {
+          await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
@@ -205,7 +211,12 @@ const resendOtp = async (req, res) => {
     await user.save();
     let _emailDelivered = true;
       try {
-        await sendOtpEmail(user.email, user.name, otp, purpose || "Security Verification");
+        let _mailOk = true;
+        try {
+          await sendOtpEmail(user.email, user.name, otp, purpose || "Security Verification");
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
@@ -265,7 +276,12 @@ const loginUser = async (req, res) => {
       await user.save();
       let _emailDelivered = true;
       try {
-        await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+        let _mailOk = true;
+        try {
+          await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
@@ -297,7 +313,12 @@ const loginUser = async (req, res) => {
         await user.save();
         let _emailDelivered = true;
       try {
-        await sendOtpEmail(user.email, user.name, mfaOtp, "Login 2FA Verification");
+        let _mailOk = true;
+        try {
+          await sendOtpEmail(user.email, user.name, mfaOtp, "Login 2FA Verification");
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
@@ -533,7 +554,12 @@ const forgotPassword = async (req, res) => {
       await user.save();
       let _emailDelivered = true;
       try {
-        await sendOtpEmail(user.email, user.name, resetOtp, "Password Reset");
+        let _mailOk = true;
+        try {
+          await sendOtpEmail(user.email, user.name, resetOtp, "Password Reset");
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
@@ -583,12 +609,17 @@ const resetPassword = async (req, res) => {
     // Send confirmation alert email
     let _emailDelivered = true;
       try {
-        await sendEmail({
+        let _mailOk = true;
+        try {
+          await sendEmail({
       to: user.email,
       subject: "Your AetherCore-AI Password Was Changed",
       title: "Password Successfully Updated",
       bodyHtml: `<p>Hello <strong>${user.name}</strong>,</p><p>Your AetherCore-AI account password was just reset. If you did not perform this action, please contact support immediately.</p>`,
     });
+        } catch (_e) {
+          _mailOk = false;
+        }
       } catch (_mailErr) {
         _emailDelivered = false;
         console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);

@@ -15,6 +15,7 @@ const userRoutes = require("./routes/userRoutes");
 const billingRoutes = require("./routes/billingRoutes");
 const supportRoutes = require("./routes/supportRoutes");
 const app = express();
+app.set("trust proxy", 1);
 // ============================================================================
 // 1. ENTERPRISE SECURITY & PARSING MIDDLEWARES
 // ============================================================================
