@@ -1,4 +1,5 @@
 @echo off
+set CSC_IDENTITY_AUTO_DISCOVERY=false
 title AetherCore-AI Master Windows Installer Builder (Lean Production Mode)
 echo ============================================================================
 echo   AetherCore-AI v1.0.0 - Lean Commercial Windows Installer Builder
