@@ -7,7 +7,7 @@ def _aether_excepthook(exc_type, exc_val, exc_tb):
     _orig_excepthook(exc_type, exc_val, exc_tb)
 _sys.excepthook = _aether_excepthook
 
-﻿import os
+import os
 import sys
 import json
 import time
