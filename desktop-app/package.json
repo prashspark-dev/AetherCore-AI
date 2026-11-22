@@ -43,17 +43,20 @@
                                                           ]
                                              }
                                          ],
-                              "icon":  "build/icon.ico",
                               "artifactName":  "AetherCore-AI-Setup-${version}.exe",
-                              "signAndEditExecutable":  false
+                              "signAndEditExecutable":  false,
+                              "icon":  "build/icon.ico"
                           },
                   "nsis":  {
-                               "oneClick":  false,
                                "perMachine":  false,
-                               "allowToChangeInstallationDirectory":  true,
                                "createDesktopShortcut":  true,
                                "createStartMenuShortcut":  true,
-                               "shortcutName":  "AetherCore-AI"
+                               "shortcutName":  "AetherCore-AI",
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true,
+                               "deleteAppDataOnUninstall":  true,
+                               "installerIcon":  "build/icon.ico",
+                               "uninstallerIcon":  "build/icon.ico"
                            }
               },
     "dependencies":  {

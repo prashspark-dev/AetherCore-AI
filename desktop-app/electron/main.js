@@ -121,6 +121,10 @@ function getSmartRestoredBounds() {
 function createMainWindow() {
   const initialBounds = getSmartRestoredBounds();
   mainWindow = new BrowserWindow({
+    icon: require("path").join(__dirname, "../public/icon.png"),
+    maximizable: true,
+    minimizable: true,
+    resizable: true,
     x: initialBounds.x,
     y: initialBounds.y,
     width: initialBounds.width,
@@ -214,3 +218,86 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+// === AETHERCORE_V101_UX_PATCH ===
+(() => {
+  const { app, BrowserWindow, ipcMain } = require("electron");
+  const path = require("path");
+  const brandIcon = path.join(__dirname, "../public/icon.png");
+  if (!ipcMain.listenerCount("aether-win-minimize")) {
+    ipcMain.on("aether-win-minimize", (e) => {
+      const w = BrowserWindow.fromWebContents(e.sender);
+      if (w) w.minimize();
+    });
+    ipcMain.on("aether-win-maximize", (e) => {
+      const w = BrowserWindow.fromWebContents(e.sender);
+      if (!w) return;
+      if (w.isMaximized()) w.unmaximize();
+      else w.maximize();
+    });
+    ipcMain.on("aether-win-close", (e) => {
+      const w = BrowserWindow.fromWebContents(e.sender);
+      if (w) w.close();
+    });
+  }
+  app.on("browser-window-created", (_event, win) => {
+    if (win._isOAuthPopup) return;
+    try {
+      win.setIcon(brandIcon);
+      win.setMaximizable(true);
+      win.setMinimizable(true);
+      win.setResizable(true);
+    } catch (_) {}
+    const openCenteredOAuth = (oauthUrl) => {
+      const popup = new BrowserWindow({
+        width: 500,
+        height: 660,
+        center: true,
+        parent: win,
+        modal: true,
+        autoHideMenuBar: true,
+        backgroundColor: "#07090F",
+        title: "Sign in with Google — AetherCore-AI",
+        icon: brandIcon,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true
+        }
+      });
+      popup._isOAuthPopup = true;
+      popup.loadURL(oauthUrl);
+      const handleCallback = (targetUrl) => {
+        if (
+          targetUrl.includes("token=") ||
+          targetUrl.includes("oauth_success") ||
+          targetUrl.startsWith("http://localhost:5173") ||
+          targetUrl.startsWith("file://")
+        ) {
+          win.loadURL(targetUrl);
+          if (!popup.isDestroyed()) popup.close();
+          return true;
+        }
+        return false;
+      };
+      popup.webContents.on("will-navigate", (ev, targetUrl) => {
+        if (handleCallback(targetUrl)) ev.preventDefault();
+      });
+      popup.webContents.on("did-navigate", (_ev, targetUrl) => {
+        handleCallback(targetUrl);
+      });
+    };
+    win.webContents.on("will-navigate", (ev, navUrl) => {
+      if (navUrl.includes("/api/auth/google") || navUrl.includes("accounts.google.com")) {
+        ev.preventDefault();
+        openCenteredOAuth(navUrl);
+      }
+    });
+    win.webContents.setWindowOpenHandler(({ url: navUrl }) => {
+      if (navUrl.includes("/api/auth/google") || navUrl.includes("accounts.google.com")) {
+        openCenteredOAuth(navUrl);
+        return { action: "deny" };
+      }
+      return { action: "allow" };
+    });
+  });
+})();

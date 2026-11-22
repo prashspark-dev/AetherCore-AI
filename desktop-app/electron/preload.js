@@ -11,3 +11,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   setAutoStart: (enabled) => ipcRenderer.send("app:set-autostart", !!enabled),
   getAppInfo: () => ipcRenderer.invoke("app:get-info"),
 });
+try {
+  const { contextBridge, ipcRenderer } = require("electron");
+  contextBridge.exposeInMainWorld("aetherWinControls", {
+    minimize: () => ipcRenderer.send("aether-win-minimize"),
+    toggleMaximize: () => ipcRenderer.send("aether-win-maximize"),
+    close: () => ipcRenderer.send("aether-win-close")
+  });
+} catch (_) {}
