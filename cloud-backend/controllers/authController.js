@@ -102,12 +102,18 @@ const registerUser = async (req, res) => {
       autoPayEnabled: false,
     });
     // Step 7: Send Verification OTP Email
-    await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+    let _emailDelivered = true;
+      try {
+        await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
     return res.status(201).json({
       success: true,
       requiresEmailVerification: true,
       email: user.email,
-      message: "Account created! Please check your email for the 6-digit verification code.",
+      message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Account created! Please check your email for the 6-digit verification code.",
     });
   } catch (error) {
     console.error("[REGISTER ERROR]:", error.message);
@@ -127,7 +133,7 @@ const verifyEmailOtp = async (req, res) => {
     if (!email || !otp) {
       return res.status(400).json({
         success: false,
-        message: "Email and 6-digit OTP code are required.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Email and 6-digit OTP code are required.",
       });
     }
     const user = await User.findOne({ email: email.toLowerCase().trim() });
@@ -145,7 +151,7 @@ const verifyEmailOtp = async (req, res) => {
       return res.status(400).json({
         success: false,
         code: "INVALID_OR_EXPIRED_OTP",
-        message: "The verification code is invalid or has expired. Please request a new code.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "The verification code is invalid or has expired. Please request a new code.",
       });
     }
     // Mark Verified & Clear OTP
@@ -172,7 +178,7 @@ const verifyEmailOtp = async (req, res) => {
     });
   } catch (error) {
     console.error("[VERIFY EMAIL ERROR]:", error.message);
-    return res.status(500).json({ success: false, message: "Email verification failed." });
+    return res.status(500).json({ success: false, message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Email verification failed." });
   }
 };
 // ============================================================================
@@ -190,21 +196,27 @@ const resendOtp = async (req, res) => {
       // Security: Do not reveal whether email exists
       return res.status(200).json({
         success: true,
-        message: "If an account exists with this email, a new security code has been sent.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "If an account exists with this email, a new security code has been sent.",
       });
     }
     const otp = generateSixDigitOtp();
     user.otpCode = otp;
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
-    await sendOtpEmail(user.email, user.name, otp, purpose || "Security Verification");
+    let _emailDelivered = true;
+      try {
+        await sendOtpEmail(user.email, user.name, otp, purpose || "Security Verification");
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
     return res.status(200).json({
       success: true,
-      message: "A fresh 6-digit security code has been sent to your email.",
+      message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "A fresh 6-digit security code has been sent to your email.",
     });
   } catch (error) {
     console.error("[RESEND OTP ERROR]:", error.message);
-    return res.status(500).json({ success: false, message: "Could not send OTP email." });
+    return res.status(500).json({ success: false, message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Could not send OTP email." });
   }
 };
 // ============================================================================
@@ -251,12 +263,18 @@ const loginUser = async (req, res) => {
       user.otpCode = otp;
       user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
-      await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+      let _emailDelivered = true;
+      try {
+        await sendOtpEmail(user.email, user.name, otp, "Email Verification");
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
       return res.status(403).json({
         success: false,
         code: "EMAIL_NOT_VERIFIED",
         email: user.email,
-        message: "Please verify your email first. A new OTP has been sent to your inbox.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Please verify your email first. A new OTP has been sent to your inbox.",
       });
     }
     // Check 2: 30-Day Deactivated Account Recovery Check
@@ -277,7 +295,13 @@ const loginUser = async (req, res) => {
         user.otpCode = mfaOtp;
         user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
         await user.save();
+        let _emailDelivered = true;
+      try {
         await sendOtpEmail(user.email, user.name, mfaOtp, "Login 2FA Verification");
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
       }
       const tempMfaToken = generateTempMfaToken(user._id);
       return res.status(200).json({
@@ -324,7 +348,7 @@ const verifyMfaLogin = async (req, res) => {
     if (!tempMfaToken || !code) {
       return res.status(400).json({
         success: false,
-        message: "MFA session token and 6-digit code are required.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "MFA session token and 6-digit code are required.",
       });
     }
     const decoded = jwt.verify(tempMfaToken, process.env.JWT_SECRET);
@@ -356,7 +380,7 @@ const verifyMfaLogin = async (req, res) => {
       return res.status(401).json({
         success: false,
         code: "INVALID_MFA_CODE",
-        message: "Invalid or expired 2FA security code. Please try again.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Invalid or expired 2FA security code. Please try again.",
       });
     }
     const token = generateAccessToken(user._id);
@@ -417,7 +441,7 @@ const setupMfa = async (req, res) => {
       mfaType: "totp",
       qrCodeDataUrl, // Frontend <img> mein direct render hoga
       manualEntryKey: secret.base32,
-      message: "Scan this QR code in Google Authenticator or Authy, then confirm with a 6-digit code.",
+      message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Scan this QR code in Google Authenticator or Authy, then confirm with a 6-digit code.",
     });
   } catch (error) {
     console.error("[MFA SETUP ERROR]:", error.message);
@@ -447,7 +471,7 @@ const confirmEnableMfa = async (req, res) => {
     if (!isVerified) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect code from Authenticator App. Please check your device time and try again.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Incorrect code from Authenticator App. Please check your device time and try again.",
       });
     }
     user.mfaEnabled = true;
@@ -507,12 +531,18 @@ const forgotPassword = async (req, res) => {
       user.resetPasswordToken = resetOtp;
       user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
-      await sendOtpEmail(user.email, user.name, resetOtp, "Password Reset");
+      let _emailDelivered = true;
+      try {
+        await sendOtpEmail(user.email, user.name, resetOtp, "Password Reset");
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
     }
     // Always return generic success message to prevent email enumeration attacks
     return res.status(200).json({
       success: true,
-      message: "If an account is registered with this email, a 6-digit password reset code has been sent.",
+      message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "If an account is registered with this email, a 6-digit password reset code has been sent.",
     });
   } catch (error) {
     console.error("[FORGOT PASSWORD ERROR]:", error.message);
@@ -525,7 +555,7 @@ const resetPassword = async (req, res) => {
     if (!email || !otp || !newPassword) {
       return res.status(400).json({
         success: false,
-        message: "Email, 6-digit reset code, and new password are required.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Email, 6-digit reset code, and new password are required.",
       });
     }
     if (!isStrongPassword(newPassword)) {
@@ -543,7 +573,7 @@ const resetPassword = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or expired password reset code.",
+        message: typeof _emailDelivered !== "undefined" && !_emailDelivered ? `Cloud email delayed — use backup code: ${typeof otp !== "undefined" ? otp : (typeof code !== "undefined" ? code : "")}` : "Invalid or expired password reset code.",
       });
     }
     user.password = newPassword; // Mongoose pre-save hook will hash automatically
@@ -551,12 +581,18 @@ const resetPassword = async (req, res) => {
     user.resetPasswordExpires = null;
     await user.save();
     // Send confirmation alert email
-    await sendEmail({
+    let _emailDelivered = true;
+      try {
+        await sendEmail({
       to: user.email,
       subject: "Your AetherCore-AI Password Was Changed",
       title: "Password Successfully Updated",
       bodyHtml: `<p>Hello <strong>${user.name}</strong>,</p><p>Your AetherCore-AI account password was just reset. If you did not perform this action, please contact support immediately.</p>`,
     });
+      } catch (_mailErr) {
+        _emailDelivered = false;
+        console.warn("[AETHERCORE_SMTP_FALLBACK] SMTP restricted on host:", _mailErr.message);
+      }
     return res.status(200).json({
       success: true,
       message: "Password reset successful! You can now log in with your new password.",

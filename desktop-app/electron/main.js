@@ -224,6 +224,7 @@ app.on("window-all-closed", () => {
   const { app, BrowserWindow, ipcMain } = require("electron");
   const path = require("path");
   const brandIcon = path.join(__dirname, "../public/icon.png");
+  const chromeUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
   if (!ipcMain.listenerCount("aether-win-minimize")) {
     ipcMain.on("aether-win-minimize", (e) => {
       const w = BrowserWindow.fromWebContents(e.sender);
@@ -265,25 +266,42 @@ app.on("window-all-closed", () => {
         }
       });
       popup._isOAuthPopup = true;
-      popup.loadURL(oauthUrl);
-      const handleCallback = (targetUrl) => {
-        if (
-          targetUrl.includes("token=") ||
-          targetUrl.includes("oauth_success") ||
-          targetUrl.startsWith("http://localhost:5173") ||
-          targetUrl.startsWith("file://")
-        ) {
-          win.loadURL(targetUrl);
-          if (!popup.isDestroyed()) popup.close();
-          return true;
-        }
+      popup.webContents.setUserAgent(chromeUA);
+      popup.loadURL(oauthUrl, { userAgent: chromeUA });
+      let completed = false;
+      const finishWithToken = async (targetUrl) => {
+        if (completed || !targetUrl) return false;
+        try {
+          const parsed = new URL(targetUrl);
+          const token = parsed.searchParams.get("token");
+          if (token) {
+            completed = true;
+            const safeToken = JSON.stringify(token);
+            const safeKey = JSON.stringify("aethercore_token");
+            await win.webContents.executeJavaScript(`
+              localStorage.setItem(${safeKey}, ${safeToken});
+              localStorage.setItem("token", ${safeToken});
+              localStorage.setItem("aethercore_token", ${safeToken});
+            `);
+            const baseAppUrl = win.webContents.getURL().split("?")[0].split("#")[0];
+            win.loadURL(`${baseAppUrl}?token=${encodeURIComponent(token)}`);
+            if (!popup.isDestroyed()) popup.close();
+            return true;
+          }
+        } catch (_) {}
         return false;
       };
-      popup.webContents.on("will-navigate", (ev, targetUrl) => {
-        if (handleCallback(targetUrl)) ev.preventDefault();
+      popup.webContents.on("will-redirect", (ev, url) => {
+        finishWithToken(url).then((ok) => { if (ok) ev.preventDefault(); });
       });
-      popup.webContents.on("did-navigate", (_ev, targetUrl) => {
-        handleCallback(targetUrl);
+      popup.webContents.on("will-navigate", (ev, url) => {
+        finishWithToken(url).then((ok) => { if (ok) ev.preventDefault(); });
+      });
+      popup.webContents.on("did-navigate", (_ev, url) => {
+        finishWithToken(url);
+      });
+      popup.webContents.on("did-fail-load", (_ev, _code, _desc, validatedURL) => {
+        finishWithToken(validatedURL);
       });
     };
     win.webContents.on("will-navigate", (ev, navUrl) => {

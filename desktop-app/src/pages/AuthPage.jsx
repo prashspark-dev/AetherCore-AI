@@ -569,31 +569,7 @@ export default function AuthPage({ legalConsent, hardwarePermissions, onAuthSucc
               </div>
               {/* Local Offline UI Preview Option (Useful if MongoDB .env isn't configured yet) */}
               <div className="mt-4 pt-3 border-t border-white/5 text-center">
-                <button
-                  type="button"
-                  onClick={() =>
-                    onAuthSuccess({
-                      token: "local_offline_session",
-                      user: {
-                        id: "local_dev",
-                        name: name || "Aditya",
-                        email: email || "aditya@aethercore.ai",
-                        mfaEnabled: false,
-                        mfaType: "none",
-                        hardwarePermissions,
-                      },
-                      subscription: {
-                        status: "trial",
-                        amountINR: 99,
-                        autoPayEnabled: false,
-                        daysRemaining: 7,
-                      },
-                    })
-                  }
-                  className="text-[11px] text-slate-500 hover:text-cyan-300 transition"
-                >
-                  Continue in Local Offline Mode (Preview Live Telemetry Without Cloud DB) →
-                </button>
+                
               </div>
             </>
           )}
