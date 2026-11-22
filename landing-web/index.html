@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AetherCore-AI | Autonomous AI Hardware Telemetry & Thermal Guard for Windows</title>
+  <meta name="description" content="Prevent thermal throttling, monitor live CPU & RAM telemetry, and optimize active Windows apps autonomously with AetherCore-AI." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #07090F;
+      color: #F8FAFC;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    .mesh-bg {
+      background-image:
+        radial-gradient(circle at 18% 18%, rgba(6, 182, 212, 0.16), transparent 42%),
+        radial-gradient(circle at 82% 22%, rgba(99, 102, 241, 0.16), transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.10), transparent 45%);
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.68);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+    }
+  </style>
+</head>
+<body class="mesh-bg min-h-screen flex flex-col justify-between selection:bg-cyan-500/30 selection:text-cyan-200">
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/70 bg-[#07090F]/80 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="3" />
+            <rect x="9" y="9" width="6" height="6" rx="1" />
+            <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3" />
+          </svg>
+        </div>
+        <span class="font-bold text-lg tracking-tight text-white">AetherCore<span class="text-cyan-400">-AI</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm text-slate-300">
+        <a href="#features" class="hover:text-cyan-400 transition">Features</a>
+        <a href="#pricing" class="hover:text-cyan-400 transition">Pricing</a>
+        <a href="#install-guide" class="hover:text-cyan-400 transition">Install Guide</a>
+        <a href="/privacy" class="hover:text-cyan-400 transition">Privacy</a>
+      </nav>
+      <a href="https://github.com/prashspark-dev/AetherCore-AI/releases/download/v1.0.0/AetherCore-AI-Setup-1.0.0.exe"
+         class="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-sm font-semibold shadow-lg shadow-cyan-500/20 transition">
+        Download v1.0.0
+      </a>
+    </div>
+  </header>
+  <!-- Hero Section -->
+  <main class="flex-1">
+    <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 text-xs font-medium mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Official Release v1.0.0 • Windows 10 &amp; Windows 11 (64-bit)
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight mb-6">
+        Autonomous AI Hardware Control &amp; <span class="bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">Thermal Guard</span>
+      </h1>
+      <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-10">
+        Keep your Windows laptop cool, fast, and whisper-quiet. AetherCore-AI uses a lightweight local Reinforcement Learning engine to prevent thermal throttling and prioritize your active apps—with zero personal file access.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+        <a href="https://github.com/prashspark-dev/AetherCore-AI/releases/download/v1.0.0/AetherCore-AI-Setup-1.0.0.exe"
+           class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-base shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-3 transition transform hover:-translate-y-0.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+          </svg>
+          Download for Windows (.exe) — 110 MB
+        </a>
+        <a href="#features"
+           class="w-full sm:w-auto px-7 py-4 rounded-xl glass-card hover:border-slate-600 text-slate-200 font-semibold text-base transition">
+          Explore Architecture
+        </a>
+      </div>
+      <p class="text-xs text-slate-400">
+        Includes <strong>7-Day Full Free Trial</strong> • No Credit Card Required • SHA-256 Verified Build
+      </p>
+    </section>
+    <!-- Core Features Grid -->
+    <section id="features" class="max-w-6xl mx-auto px-6 py-14">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-3">Engineered for Real-Time Performance</h2>
+        <p class="text-slate-400">Runs silently at ~34 MB RAM in the background while protecting your CPU.</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/15 text-cyan-400 flex items-center justify-center font-bold mb-4">01</div>
+          <h3 class="text-lg font-bold text-white mb-2">Live Hardware Telemetry</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Real-time per-core CPU load, package temperature, clock speed, and memory pressure graphs updated every second.
+          </p>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center font-bold mb-4">02</div>
+          <h3 class="text-lg font-bold text-white mb-2">RL Thermal Guard</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Pure-NumPy Reinforcement Learning policy dynamically adjusts Windows processor power caps before overheating occurs.
+          </p>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center font-bold mb-4">03</div>
+          <h3 class="text-lg font-bold text-white mb-2">Auto-VIP App Boost</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Learns your daily workflow and boosts CPU priority for your active foreground apps while taming background hogs.
+          </p>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold mb-4">04</div>
+          <h3 class="text-lg font-bold text-white mb-2">Zero File Access Privacy</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Strictly reads hardware sensors and process metrics. Never scans your documents, photos, browser history, or personal files.
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- Transparent Pricing -->
+    <section id="pricing" class="max-w-4xl mx-auto px-6 py-14">
+      <div class="glass-card rounded-3xl p-8 md:p-10 border-cyan-500/30 relative overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div>
+            <span class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-semibold">SIMPLE &amp; TRANSPARENT</span>
+            <h2 class="text-3xl font-bold text-white mt-3 mb-2">AetherCore-AI Pro</h2>
+            <p class="text-slate-300 text-sm max-w-md leading-relaxed">
+              Start with a full-featured <strong>7-Day Free Trial</strong>. Continue uninterrupted with autonomous AI thermal protection and cloud sync for less than a cup of chai a week.
+            </p>
+            <ul class="mt-5 space-y-2 text-sm text-slate-300">
+              <li>✓ Unlimited Autonomous RL Thermal Guard</li>
+              <li>✓ Adaptive Process Priority &amp; Safe-Guard Restorer</li>
+              <li>✓ 2FA Cloud Account Sync &amp; Priority Email Support</li>
+              <li>✓ Cancel anytime in 1 click inside the app</li>
+            </ul>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-6 text-center min-w-[230px]">
+            <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">After 7-Day Free Trial</div>
+            <div class="text-4xl font-extrabold text-white">&#8377;99<span class="text-base font-normal text-slate-400">/month</span></div>
+            <div class="text-xs text-cyan-400 mt-1 mb-5">Instant UPI &amp; AutoPay Support</div>
+            <a href="https://github.com/prashspark-dev/AetherCore-AI/releases/download/v1.0.0/AetherCore-AI-Setup-1.0.0.exe"
+               class="block w-full py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition">
+              Start Free Trial
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Windows SmartScreen Note -->
+    <section id="install-guide" class="max-w-4xl mx-auto px-6 pb-16">
+      <div class="glass-card rounded-2xl p-6 border-slate-800">
+        <h3 class="text-base font-bold text-white mb-2">Quick Windows Installation Note (v1.0.0)</h3>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Because AetherCore-AI v1.0.0 is a newly released independent build, Windows SmartScreen may display an <em>"Unknown Publisher"</em> prompt on first launch. Simply click <strong>"More info" &rarr; "Run anyway"</strong> to complete the 10-second installation. On launch, the app automatically restores CPU power caps to 100% whenever you exit.
+        </p>
+      </div>
+    </section>
+  </main>
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-[#05070C] py-8">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div>&copy; 2026 AetherCore-AI. Built for Windows 10 &amp; 11.</div>
+      <div class="flex items-center gap-6">
+        <a href="/privacy" class="hover:text-cyan-400 transition">Privacy Policy</a>
+        <a href="/terms" class="hover:text-cyan-400 transition">Terms of Service</a>
+        <a href="mailto:aethercore.ai.support@gmail.com" class="hover:text-cyan-400 transition">Support</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
